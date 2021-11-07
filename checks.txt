@@ -1,0 +1,203 @@
++01 - verificar se todos os campos foram preenchidos ao criar conta
+
+02 - Mudar avatar
+
++03 - Mudar o placeholder da fazenda
+
+04 - *Tentar implementar cidade e estados automáticos
+
+05 - *Pegar geolocalização da fazenda
+
+06 - Fazer máscara de valor no campo nova área
+
+07 - tentar fazer com que só sejam selecionadas áreas de determinada
+ou retirar o preenchimento de fazenda já que já vem armazenado no campo
+
+08 - Alterar label do data fim para data de previsão
+
+09 - fazer máscara na produção de colheita
+
+10 - 
+
+create database sanagro
+
+create table if not exists usuarios(
+	id int AUTO_INCREMENT,
+    name varchar(100),
+    lastname varchar(100),
+    usuario varchar(100),
+    senha_usuario varchar(100),
+    created_at timestamp,
+    primary key(id),
+    UNIQUE key(usuario)
+);
+
+create table if not exists farm(
+	id_farm int AUTO_INCREMENT,
+	name varchar(100),
+	address varchar(100),
+	city varchar(100),
+	uf char(2),
+	created_at timestamp,
+	id int not null,
+	primary key(id_farm),
+	unique key(name),
+	foreign key(id) references usuarios(id)	
+);
+
+create table area02(
+	id_area int AUTO_INCREMENT,
+	ar_name varchar(100),
+	size double,
+	metric varchar(100),
+	ar_status varchar(100),
+	id_farm int,
+	id int,
+	created_at timestamp,
+	primary key(id_area),
+	foreign key(id) references usuarios(id),
+	foreign key(id_farm) references farm(id_farm),
+	unique key(ar_name)
+);
+
+create table crop(
+	id_crop int AUTO_INCREMENT,
+	name varchar(100),
+	dtini date,
+	dtend date,
+	cultive varchar(100),
+	cro_status varchar(100),
+	created_at timestamp,
+	id_area int,
+	id int,
+	primary key(id_crop),
+	foreign key(id_area) references area02(id_area);
+	foreign key(id) references usuarios(id);
+	unique key(name)
+);
+
+create table harvest(
+	id_harvest int AUTO_INCREMENT,
+	id_crop int,
+	dateend date,
+	production double,
+	created_at timestamp,
+	id int,
+	primary key(id_harvest),
+	foreign key(id) references usuarios(id),
+	foreign key(id_crop) references crop(id_crop)
+);
+
+create table product(
+	id_product int AUTO_INCREMENT,
+	description varchar(100),
+	brand varchar(100),
+	value double,
+	quantity int,
+	metric varchar(50),
+	created_at timestamp,
+	id_farm int,
+	id int,
+	primary key(id_product),
+	foreign key(id_farm) references farm(id_farm),
+	foreign key(id) references usuarios(id),
+	unique key(description)
+);
+
+create table patrimony(
+	id_patrimony int AUTO_INCREMENT,
+	name varchar(100),
+	type varchar(50),
+	value double,
+	id_farm int,
+	created_at timestamp,
+	id int,
+	primary key(id_patrimony),
+	foreign key(id_farm) references farm(id_farm),
+	foreign key(id) references usuarios(id),
+	unique key(name)
+);
+
+create table providers(
+	id_providers int AUTO_INCREMENT,
+	pro_name varchar(100),
+	cnpj varchar(30),
+	contact varchar(30),
+	address varchar(100),
+	city varchar(100),
+	uf char(2),
+	id_farm int,
+	id int,
+	created_at timestamp,
+	primary key(id_providers),
+	foreign key(id_farm) references farm(id_farm),
+	foreign key(id) references usuarios(id),
+	unique key(cnpj)
+);
+
+create table customers(
+	id_customer int AUTO_INCREMENT,
+	name varchar(100),
+	cpf varchar(30),
+	contact varchar(30),
+	address varchar(100),
+	city varchar(100),
+	uf char(2),
+	id_farm int,
+	id int,
+	created_at timestamp,
+	primary key(id_customer),
+	foreign key(id_farm) references farm(id_farm),
+	foreign key(id) references usuarios(id),
+	unique key(cpf)	
+);
+
+create table contaareceber(
+	id_car int AUTO_INCREMENT,
+	description varchar(100),
+	value double,
+	installments int,
+	installment_value double,
+	status varchar(30),
+	expiration date,
+	id_customer int,
+	id int,
+	primary key(id_car),
+	foreign key(id_customer) references customers(id_customer),
+	foreign key(id) references usuarios(id),
+	unique key(description)
+);
+
+create table contaapagar(
+	id_cap int AUTO_INCREMENT,
+	description varchar(100),
+	value double,
+	installments int,
+	installment_value double,
+	status varchar(30),
+	expiration date,
+	id_providers int,
+	id int,
+	primary key(id_cap),
+	foreign key(id_providers) references providers(id_providers),
+	foreign key(id) references usuarios(id),
+	unique key(description)
+);
+
+create table employees(
+	id_emp int AUTO_INCREMENT,
+	name varchar(100),
+	gender varchar(20),
+	cpf varchar(20),
+	office varchar(20),
+	contact varchar(20),
+	address varchar(100),
+	payment decimal(10,2),
+	id int,
+	id_farm int,
+	update_at timestamp,
+	created_at datetime,
+	primary key(id_emp),
+	foreign key(id) references usuarios(id),
+	foreign key(id_farm) references farm(id_farm)
+);
